@@ -1,0 +1,8 @@
+These notes are related to Karan Singh interview by red hat on Youtube :
+  You will need commodity hardware.
+  It's best to have 3 replica copies
+  The more nodes, will give you the better performance.
+
+  Note : SEE OPENSTACK AND CEPH SUMMITS
+
+  Note : Read more about Manila

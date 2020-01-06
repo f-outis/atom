@@ -1,0 +1,213 @@
+Ask Lukasz : What will be dev panel's usage for devops
+Ask Lukasz : Teach us how to use Clockwork plugin :)
+Ask Lukasz : What is the different between :
+  supernova-env-digikala-admin
+  supernova-digikala-admin
+Ask Lukasz : How to manage passwords(MySQL) and env variables
+Ask Lukasz : Using flags. Explain why modules instead of branches
+Ask Lukasz : Working with env-dev
+  how to solve :
+[Composer\Downloader\TransportException]
+The "https://api.github.com/repos/digikala-supernova/supernova-digikala-api-docs" file could not be downloaded (HTTP/1.1 404 Not Found)
+  how to update after long time ?
+Ask Lukasz : Prepare using local debian repo in env-dev. we need to configure the env-dev to be able to use our local repo.
+
+
+
+Errors :
+ - Everything will be logged.
+
+Database schema :
+ - it analyzes ORM, and generates the code you need to execute.
+
+ Elasticsearch mapping :
+ - You never modify mappings and indexes manually. ORM will handle this.
+
+ Dev Password :
+ - every developer needs a dev account.
+
+Global health check : (Ask Lukasz : How we can use this ???)
+ - Implement a monitoring health check using a json api.
+ - connectivity to mysql, redis, and running...
+
+Redis Queues :
+ - Local cache will be APCu.
+
+------------------------------------------
+- Modify headers plugin
+- Clockwork
+
+------------------------------------------
+Opcache :
+is a tool for php, compiling the code and keep it in memory.
+the default configuration is remove the cache every 1seconds.
+in supernova we must keep the cache forever. on development side, using modify headers plugin you tell opcache to recompile the code on request.
+------------------------------------------
+vendor folder :
+vendor/digikala --> this is the place where you code
+
+for example digikala-admin environment :
+  in config, we have yaml file. the configuration for each product will be a yml file.
+  each prd can be run in different mode.
+    - Local(Dev mode)
+    - Test : developers can use demo machine.
+    - CI.
+    - Production
+
+DevOps will be responsible to make passwords available as environment. so the code will be use this env variable.
+
+-----------------------------------------------
+vendor/digikala/supernova-env-digikala-admin/web/index.php -->
+starting point
+
+Twig : Template language
+  Note : keep the templates as simple as possible
+
+Extension.php :
+  you have to register services here. Study--> PHP Containers
+  php container : if a class is not initialized, initialize it, and from now now, it will be initialized
+
+  you register services here
+----------------------------------------------
+Event dispatcher :
+  after creating an event, the event dispatcher will tell all listener that an event has been issued.
+----------------------------------------------
+Tests :
+  Functional Test : if a javascript is broken in a scenario, then we must use selenium.
+
+  1. Preparing data
+  2. Writing the test.
+
+  each test will have its namespace(Db,ES,memcached,apcu...) and each test will be executed in its thread. so we can run them simultaneously.
+---------------------------------------------------
+Images and static files :
+  - We have php code to get/retrieve binary contents.
+  - each image will have a unique ID.
+  - PHP API
+  - PUT : ID+binary data
+  - md5 creating 3 layer folders using md5 hash.
+  - one image is uploaded , we have 2 storages. API is retrieve from both servers OK and OK.
+  - we will have 3 physical servers. each storage will have and ID 1,2,3.
+  - one simple php code will be deployed on each storage machines using nginx. each server will have a domain name also.
+  - each server can have weight.
+  - php code have an internal system to distribute images across servers.
+  - varnish : must converting the url to the path of filesystem.
+  - the api storage has an health check monitoring.
+  - we need provide a url or api if the servers are up or not.
+  - 3 machines
+  - Lukasz will tell us about the estimation of image sizes.
+  -- 28 servers will be varnish machines.
+  -- One file will be distributed across for example 3 randomly.
+  -- There will be a table on associated db to each prd to save the location of each binary content. each table will have ID(int), Namespace(enum)
+  - if a server failed, so we will need to modify devops.yml
+  -----------------------------------------------------------
+  DB : DW, DA, FC, DC, MP, CA
+   - Some prd has much more than 1 DB
+   - each prd has 2 instances of DB , both of them must be master/master
+   - one IP for each DB for each prd
+   - Backup every night, and keep it on another datacenter(Min 3day)
+   - Backup during day, bin-log, to recover point-in-time approach
+   - We must have a plan for bin-log
+   - Migrating script will take one hour to new database.
+    -- Stop current website
+    -- start migration scripts
+   - DW + DA 2servers
+   - FC 2servers
+   - DC 2servers
+   - MP + CA 2servers
+   - +2 Servers as Archive DB
+
+-------------------------------------------------------
+CM (Deployment tools)
+  - A
+-------------------------------------------------------
+ES
+  - it will be decided on March
+  - 4 dedicated servers for ES + varnish without serving any php products  (26 Workers)
+-------------------------------------------------------
+Server categories :
+DW 13
+DA + CA 3
+FC 4
+DC 3
+MP 3
+---------------------------------------------------------
+Statsd :
+one statsd/Graphite for each product
+---------------------------------------------------
+Redis :
+4 sentinels for DW
+1 for each product.
+---------------------------------------------------
+Deployment Tools :
+must be discussed with Rafal !
+----------------------------
+Crons :
+ supernova has an internal mechanism to check if all the scripts are running.
+ on each worker must be setup a cron
+ crons will use get-lock() and release-lock() mysql functions.
+ Note : each worker must have an unique ID which will be defined in devops.yml
+
+Some of these scripts are responsible to send email/sms.
+
+ Task from developers to devops team :
+  1. Altering the tables(Some tool from percona that is specially designed to alter tables,etc...)
+  2. Monitoring
+-------------------------------------
+Queues :
+Redis -> Sets and Lists
+Monitor queues must be done by DevOps.
+------------------------------------
+CI :
+supernova-env-ci
+Task : check mcrouter
+
+supernova-env-ci/bin/delivery :
+build.sh -> build ci system from scratch
+  it will work in a two-way authentication.
+
+digikala-env-delivery
+  .../config/   : config for all working modes are here. all files within config folder will be override by every specific working mode folder.
+  DevOps task: must be able to define configuration for specific working mode.
+
+composer.json
+  require: { PLUGIN FOR THIS SPECIFIC CI MODE }
+
+Task : Configure varnish in a way to point to web/statics
+
+Note : if we are not in prd mode, there is a cron to generate DB
+let's check the cron on old demo machine.
+  build-artifact.sh
+  there is a table on db called ci-artifacts. check the table on database later!
+  buildartefactcommand.php : this file make sure to check version of composer plugin versions.
+  the reason to keep lock file in db is that we can refer to it later, and  future we will be able to have the exact same version of composers.
+
+in each prd we have test folder which contains unit test.
+
+to access to ci panel, you must provide user/pass. we need to know the mode : test,prd,etc,,, and then in the env-ci in related folder, test for example we will have a ci.yml
+and access is defined to dev_access.yml
+
+Ask : How to run tests!?
+testartifactcommand.php
+in cron : test-artifact.sh -> it has an argument and it's the number of thread. the cron will pick a test from the array tha is generetad by buildartifact. test-artifact pick one of the untested randomly.
+each thread uses a different namespace.
+
+selenium test :
+considering test thread, we must have identical amount of chrome nodes within selenium hub.
+
+on each worker we must 1GB memory dedicated to APCu. the only way to reset it to restart php-fpm or doing it from php code.
+  There is a problem currently. The new tests can't find any available chrome. Ali and Devops team must fix this.
+
+Task : configure a build-artifact in a way to be able to all on one machine
+Task : Search a way to cache composer for our local network.
+Task : define a plan to scale CI horizontally(consider DB )
+------------------------------
+cdn.digikala.com --> css,js,....
+storage.digikala.com --> jpg or any type of image
+
+If requests come to cdn.digikala.com  --HAproxy listens for cdn.digikala.com--> HAproxy will send traffic to any varnish on any worker node -->
+Condition 1. If the content is cached, Varnish will serve the request
+Condition 2. If the content is not cached, Varnish will asks its backends(Nginx), and the Nginx send requested data back to Varnish
+
+If requests come to storageN.digikala.com --HAProxy will send traffic to its associated backend(varnish)--> There's a configuration in application which know on which
+-----------------------------

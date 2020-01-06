@@ -1,0 +1,53 @@
+Become a DevOps : ***
+https://hackernoon.com/the-roadmap-to-become-a-devops-dude-from-server-to-serverless-dd97420f640e
+
+Graphite demystified :
+https://www.youtube.com/watch?v=3kgsOExaYtU
+
+Kafka in production :
+https://www.youtube.com/watch?v=1vLMuWsfMcA
+https://medium.com/@Pinterest_Engineering/open-sourcing-doctorkafka-kafka-cluster-healing-and-workload-balancing-e51ad25b6b17
+
+Migrating a 130TB Cluster from Elasticsearch 2 to 5 in 20 Hours with 0 Downtime and a Rollback Strategy
+https://thoughts.t37.net/migrating-a-130tb-cluster-from-elasticsearch-2-to-5-in-20-hours-with-0-downtime-and-a-rollback-39b4b4f29119
+
+How we reindexed 36 billion documents in 5 days within the same Elasticsearch cluster
+https://thoughts.t37.net/how-we-reindexed-36-billions-documents-in-5-days-within-the-same-elasticsearch-cluster-cd9c054d1db8
+
+Varnish Cache workshop at Varnishcon 2016
+https://www.youtube.com/watch?v=ybMdQWUjp2E
+
+SQL for Beginners: Part 3 - Database Relationships
+https://code.tutsplus.com/articles/sql-for-beginners-part-3-database-relationships--net-8561
+
+HAProxy Documentation Converter
+https://cbonte.github.io/haproxy-dconv/
+
+Mastering Chaos - A Netflix Guide to Microservices
+https://www.youtube.com/watch?v=CZ3wIuvmHeM
+
+MySQL Master-master
+https://www.digitalocean.com/community/tutorials/how-to-set-up-mysql-master-master-replication
+https://www.digitalocean.com/community/tutorials/how-to-configure-mysql-group-replication-on-ubuntu-16-04
+
+HA ELK
+https://everythingshouldbevirtual.com/highly-available-elk-elasticsearch-logstash-kibana-setup/
+https://qbox.io/blog/deploy-scale-logstash-high-availability-elk-redis-haproxy
+
+HAProxy monitoring
+https://www.datadoghq.com/blog/monitoring-haproxy-performance-metrics/
+
+Monitoring Percona :
+https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/monitoring.html
+
+Online CD :
+https://www.gocd.org/
+
+APCu :
+https://linuxaria.com/howto/everything-you-need-to-know-about-apc-alternate-php-cache
+
+Graphite Clustering :
+https://grey-boundary.io/the-architecture-of-clustering-graphite/
+
+Elasticsearch system configuration :
+https://www.elastic.co/guide/en/elasticsearch/reference/current/system-config.html

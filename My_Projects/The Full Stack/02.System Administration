@@ -1,0 +1,7 @@
+1.Linux and basic shell scripting
+2.Cloud computing: Amazon, Rackspace, Openstack.
+3.Background processing: Gearman, Redis
+4.Elasticsearch
+  A developer shoud know how to set up and use search servers such as ElasticSearch
+5.Caching: Varnish, Memcached
+6.Monitoring: Nagios, Zabbix

@@ -1,0 +1,151 @@
+Vagrant.configure("2") do |config|
+############################################################################
+    # Configure ServerA
+    config.vm.define "servera" do |servera|
+        servera.vm.box = "bento/centos-7.5"
+        servera.vm.box_version = "201808.24.0"
+        servera.vm.hostname = "servera"
+
+        servera.vm.network "private_network", ip: "172.25.250.10", netmask: "255.255.255.0", nic_type: "virtio"
+#        servera.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        servera.vm.provider "virtualbox" do |virtualbox|
+            unless File.exist?("servera.vdi")
+              virtualbox.customize ['createhd', '--filename', "servera.vdi", '--size', 800 * 1024]
+            end
+            virtualbox.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "servera.vdi"]
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure ServerB
+    config.vm.define "serverb" do |serverb|
+        serverb.vm.box = "bento/centos-7.5"
+        serverb.vm.box_version = "201808.24.0"
+        serverb.vm.hostname = "serverb"
+
+        serverb.vm.network "private_network", ip: "172.25.250.11", netmask: "255.255.255.0", nic_type: "virtio"
+#        serverb.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        serverb.vm.provider "virtualbox" do |virtualbox|
+            unless File.exist?("serverb.vdi")
+              virtualbox.customize ['createhd', '--filename', "serverb.vdi", '--size', 800 * 1024]
+            end
+            virtualbox.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', "serverb.vdi"]
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure ServerC
+    config.vm.define "serverc" do |serverc|
+        serverc.vm.box = "bento/centos-7.5"
+        serverc.vm.box_version = "201808.24.0"
+        serverc.vm.hostname = "serverc"
+
+        serverc.vm.network "private_network", ip: "172.25.250.12", netmask: "255.255.255.0", nic_type: "virtio"
+#        serverc.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        serverc.vm.provider "virtualbox" do |virtualbox|
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure ServerD
+    config.vm.define "serverd" do |serverd|
+        serverd.vm.box = "bento/centos-7.5"
+        serverd.vm.box_version = "201808.24.0"
+        serverd.vm.hostname = "serverd"
+
+        serverd.vm.network "private_network", ip: "172.25.250.13", netmask: "255.255.255.0", nic_type: "virtio"
+#        serverd.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        serverd.vm.provider "virtualbox" do |virtualbox|
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure ServerE
+    config.vm.define "servere" do |servere|
+        servere.vm.box = "bento/centos-7.5"
+        servere.vm.box_version = "201808.24.0"
+        servere.vm.hostname = "servere"
+
+        servere.vm.network "private_network", ip: "172.25.250.14", netmask: "255.255.255.0", nic_type: "virtio"
+#        servere.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        servere.vm.provider "virtualbox" do |virtualbox|
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure Workstation
+    config.vm.define "workstation" do |workstation|
+        workstation.vm.box = "bento/centos-7.5"
+        workstation.vm.box_version = "201808.24.0"
+        workstation.vm.hostname = "workstation"
+
+        workstation.vm.network "private_network", ip: "172.25.250.254", netmask: "255.255.255.0", nic_type: "virtio"
+#        workstation.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        workstation.vm.provider "virtualbox" do |virtualbox|
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "2048"
+            virtualbox.cpus = "2"
+            # Enable promiscuous mode
+            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+    # Configure Workstation2
+    config.vm.define "workstation2" do |workstation2|
+        workstation2.vm.box = "bento/opensuse-leap-15.0"
+        workstation2.vm.box_version = "201812.27.0"
+        workstation2.vm.hostname = "workstation2"
+
+#        workstation2.vm.network "private_network", ip: "172.25.250.111", netmask: "255.255.255.0", nic_type: "virtio"
+#        workstation2.vm.network "private_network", ip: "192.168.100.2", netmask: "255.255.255.0", nic_type: "virtio"
+
+        workstation2.vm.provider "virtualbox" do |virtualbox|
+            # Customize the amount of memory on the VM:
+            virtualbox.memory = "4096"
+            virtualbox.cpus = "4"
+            # Enable promiscuous mode
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+#            virtualbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+############################################################################
+end

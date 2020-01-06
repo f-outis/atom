@@ -1,0 +1,10 @@
+gitlab users :
+  - root / t..-2..2
+  - fara@ubuntuSRV01.localdomain / t..-2..2
+
+  then created a group called learning_projects and a project below it which is called /ansible_learning1. The complete url is : http://192.168.63.129/learning_projects/ansible_learning1
+
+
+Alfresco users :
+  - user1 / 1qazxsw2
+  - admin / e...-2..5

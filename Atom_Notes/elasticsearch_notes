@@ -1,0 +1,118 @@
+Repo ES 5.X :
+# cat /etc/apt/sources.list.d/elastic-5.x.list
+deb https://artifacts.elastic.co/packages/5.x/apt stable main
+
+https://www.elastic.co/guide/en/elasticsearch/reference/5.6/_installation.html
+------------------
+
+curl -XPUT 127.0.0.1:9200/movies -d '
+{
+  "mappings":{
+    "movie":{
+      "_all":{"enabled": false},
+      "properties":{
+        "year":{"type":"date"}
+      }
+    }
+  }
+}'
+
+curl -XPUT 127.0.0.1:9200/movies/movie/109487 -d '
+{
+"genre": ["IMAX","Sci-fi"],
+"title": "Interstellar",
+"year": 2014
+}'
+
+curl -XPUT 172.20.20.3:9200/_buld -k '
+{ "create" : { "_index" : "movies", "_type" : "movie", "_id" : "135569" } }
+{ "id": "135569", "title" : "Star Trek Beyond", "year":2016 , "genre":["Action", "Adventure", "Sci-Fi"] }
+{ "create" : { "_index" : "movies", "_type" : "movie", "_id" : "122886" } }
+{ "id": "122886", "title" : "Star Wars: Episode VII - The Force Awakens", "year":2015 , "genre":["Action", "Adventure", "Fantasy", "Sci-Fi", "IMAX"] }
+{ "create" : { "_index" : "movies", "_type" : "movie", "_id" : "109487" } }
+{ "id": "109487", "title" : "Interstellar", "year":2014 , "genre":["Sci-Fi", "IMAX"] }
+{ "create" : { "_index" : "movies", "_type" : "movie", "_id" : "58559" } }
+{ "id": "58559", "title" : "Dark Knight, The", "year":2008 , "genre":["Action", "Crime", "Drama", "IMAX"] }
+{ "create" : { "_index" : "movies", "_type" : "movie", "_id" : "1924" } }
+{ "id": "1924", "title" : "Plan 9 from Outer Space", "year":1959 , "genre":["Horror", "Sci-Fi"] }
+'
+
+
+curl -XPOST 'localhost:9200/_bulk?pretty' -H 'Content-Type: application/json' -d'
+{ "update" : {"_id" : "1", "_type" : "type1", "_index" : "index1", "_retry_on_conflict" : 3} }
+{ "doc" : {"field" : "value"} }
+{ "update" : { "_id" : "0", "_type" : "type1", "_index" : "index1", "_retry_on_conflict" : 3} }
+{ "script" : { "inline": "ctx._source.counter += params.param1", "lang" : "painless", "params" : {"param1" : 1}}, "upsert" : {"counter" : 1}}
+{ "update" : {"_id" : "2", "_type" : "type1", "_index" : "index1", "_retry_on_conflict" : 3} }
+{ "doc" : {"field" : "value"}, "doc_as_upsert" : true }
+{ "update" : {"_id" : "3", "_type" : "type1", "_index" : "index1", "_source" : true} }
+{ "doc" : {"field" : "value"} }
+{ "update" : {"_id" : "4", "_type" : "type1", "_index" : "index1"} }
+{ "doc" : {"field" : "value"}, "_source": true}
+'
+
+curl -XPUT 'localhost:9200/shakespeare?pretty' -H 'Content-Type: application/json' -d'
+{
+ "mappings": {
+  "doc": {
+   "properties": {
+    "speaker": {"type": "keyword"},
+    "play_name": {"type": "keyword"},
+    "line_id": {"type": "integer"},
+    "speech_number": {"type": "integer"}
+   }
+  }
+ }
+}
+'
+
+curl -XDELETE 'localhost:9200/twitter?pretty'
+
+=================
+curl -XDELETE localhost:9200/movies
+
+analyzer :
+curl -XPUT 'localhost:9200/movies?pretty' -H 'Content-Type: application/json' -d'
+{
+    "settings": {
+        "analysis": {
+            "filter": {
+                "autocomplete_filter": {
+                    "type":     "edge_ngram",
+                    "min_gram": 1,
+                    "max_gram": 20
+                }
+            },
+            "analyzer": {
+                "autocomplete": {
+                    "type":      "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase",
+                        "autocomplete_filter"
+                    ]
+                }
+            }
+        }
+    }
+}'
+
+apply analyzer to mapping :
+curl -XPUT 'localhost:9200/movies/_mapping/movie?pretty' -d '
+{
+        "movie": {
+                "properties": {
+                        "title": {
+                                "type": "string",
+                                "analyzer": "autocomplete",
+                                "fields": {
+                                  "raw": {
+                                        "type": "string",
+                                        "index": "not_analyzed"
+                                }
+                                }
+}
+}
+}
+}'
+============================================

@@ -1,0 +1,28 @@
+- sga and huge pages
+- mpath
+- simple tasks using sqlp (Ask Ramin)
+
+- removing output manager' queue
+
+- ACQ_Switch down will result in "No Parsian ATM" and No settle will be executed in branches
+
+- if Databases is shut down for a while and then come up, you have to restart ACQ_SW, and wait for 5-6mins afterward to load reversals.
+
+- Note about analyze Modern banking services :
+    -- In home of developer user on every modern service machine(Ineternet bank, Mobile bank, etc.), there is folder called echo. It connect to channel application of its associated modern application, and sends an echo message to MBGateway application. In its response we can find out health of the MBGateway application. In case, if the spi time-out occurs and responses take too long in milliseconds, we can conclude that the health of MBGateway application is not good. Slow Internet bank, USSD,etc. are side effects of this issue.
+    We can increase two parameters of MBGateway' configuration  :
+      --- In cm-channel-jms.properties file :
+            channel.concurrentConsumers = 10
+      --- In db.properties file :
+            db.poolSize = 20
+
+            db.poolSize must be 2 times higher that channel.concurrentConsumers.
+
+- Orders of Overnight jobs and step
+
+- Fast-paced services and knowledges :
+  -- FTP
+  -- Transmit data fast and based on bandwidth using scp or other methods
+  -- NFS
+  -- LVM (Extending / partition)
+  

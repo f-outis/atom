@@ -1,0 +1,13 @@
+client-output-buffer-limit slave 0 0 0
+vm.overcommit_memory = 1
+repl-timeout = 120
+
+
+Fetch method What it does
+path exact string match
+path_beg URL begins with string
+path_dir subdirectory match
+path_end suffix match
+path_len length match
+path_reg regex match
+path_sub substring match

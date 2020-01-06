@@ -1,0 +1,35 @@
+High level view to Docker :
+  A docker container consists of :
+    - Operating System
+    - Software that you build
+    - Dependencies or pre-requisite
+    - Env. variables
+
+-------
+App1
+Bin/Libs
+---------
+Docker Engine
+---------
+OS
+---------
+
+Kernel is shared among all docker containers.
+LXC : are user space interface for linux kernel containment, which make it possible to run multiple isolated linux containers, on one control host(LXC Host)
+
+Build -> Ship -> Run
+
+Namespace and Cgroups
+
+----------------
+docker run \
+  -d \
+  -p 3000:3000 \
+  --name=grafana \
+  -e "GF_SERVER_ROOT_URL=http://172.16.130.32" \
+  -e "GF_SECURITY_ADMIN_PASSWORD=admin" \
+  --volume grafana_ds \
+  grafana/grafana
+
+
+docker run -p 80 -p 2003 -p 2004 -p 7002 -v /data/graphite:/var/lib/graphite/storage/whisper -d nickstenning/graphite

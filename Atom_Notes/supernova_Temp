@@ -1,0 +1,20 @@
+From a broad perspective, Supernova is not a project, It's a culture. It's gonna change the technology stack alongside with the attitude of development and operation team to an endless world of technology, which is called Opensource community. Supernova as the focal point for all IT services will bring core facilities to deliver business to the website and the trance of changing or adding features won't be a challenging process with many unforeseen downsides. Needless to say all developers and devops team members believe that they are responsible for what they've been delivering to the business. Supernova will provide an opportunity for those who want to thrive.
+This platform will benefit from many opensource tools and techs. Here is a short list of them :
+  Monitoring :
+    - Rich monitoring and alerting platform. Almost every important metric, feature and service is monitored.
+    - Strong Application performance monitor. Almost every application and business statistics will be logged.
+
+  Configuration management and automation :
+    - Infrastructure as code. Everything will be code and the whole systems and machine configurations will be stored as code. So the machine provisioning will be a short time task.
+    - Pseudo containerization to provide high-availability and using different versions of the softwares.
+    - 80-90% of all operations are automated, so the human error will be decreased significantly.
+    - Rolling back to previous version of application if the newer version faces any error, except errors on DB. We will have 2 up/running environment simultaneously.
+
+  In-memory-caching :
+    - Edge-of-tech tools of in-memory-caching that are used and developed by Facebook. It provides super fast response time. Many parts of the whole Supernova platform are using cache facilities. Supernova's configuration of MCrouter/Memcached can be count as a phenomenon.
+
+  DB :
+    - Supernova platform is strongly defending database layers from massive read/write operations.
+
+  Search facility :
+    - Elasticsearch as an edge-of-tech tools with production level configurations

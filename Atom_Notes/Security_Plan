@@ -1,0 +1,5 @@
+- We need to define a roadmap for those are fired. All responsible teams MUST be informed to restrict accesses.
+- Listen mysql instances on localhost or limit network access to mysql port
+- Check users that left company but users in server remains
+- Limit internet access, something like vpn
+- Use a CI tool instead of ssh access ( The most importnant one )

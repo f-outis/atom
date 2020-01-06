@@ -1,0 +1,245 @@
+global
+    log 127.0.0.1 local0 warning
+    lua-load /etc/haproxy/acme-http01-webroot.lua
+    maxconn 10000
+    stats socket /var/run/haproxy-stat mode 777
+    chroot /etc/haproxy
+    tune.ssl.default-dh-param 2048
+    ssl-default-bind-ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK
+    ssl-server-verify none
+
+defaults
+    #log global
+    mode    http
+    #option httplog
+    option  dontlognull
+    option redispatch
+    maxconn 5000
+    option httpclose
+    option http-server-close
+    timeout client 120s   # Client and server timeout must match the longest
+    timeout server 1200s   # time we may wait for a response from the server.
+    timeout queue  30s   # Don't queue requests too long if saturated.
+    timeout connect 30s   # There's no reason to change this one.
+    timeout http-request 120s    # A complete request may never take that long.
+    balance roundrobin
+    retries 3
+    option tcp-smart-accept
+    option tcp-smart-connect
+    option splice-auto
+
+frontend external-http
+    bind 0.0.0.0:80
+    mode http
+
+    timeout client  5000
+    log-format [%pid]\ [%Ts.%ms]\ %ac/%fc/%bc/%bq/%sc/%sq/%rc\ %Tq/%Tw/%Tc/%Tr/%Tt\ %tsc\ %ci:%cp\ %fi:%fp\ %si:%sp\ %ft\ %sslc\ %sslv\ %{+Q}r\ %ST\ %b:%s\ "%CC"\ "%hr"\ "%CS"\ "%hs"\ req_size=%U\ resp_size=%B
+    option httplog
+    log global
+    no option accept-invalid-http-request
+    no option httpclose
+    #option forwardfor
+    #option http-server-close
+    acl url_acme_http01 path_beg /.well-known/acme-challenge/
+    http-request use-service lua.acme-http01 if METH_GET url_acme_http01
+    acl is_stats path_beg -i /haproxy-stats
+    acl is_storage hdr_beg(host) -i supernova-storage
+    acl is_api hdr_beg(host) -i supernova-api
+    http-request redirect scheme https if { hdr_beg(host) -i supernova- } !is_stats !url_acme_http01 !is_storage !is_api
+    reqadd X-HTTPS:\ off
+    use_backend stats-backend if is_stats
+    default_backend www-docker
+
+frontend external-https
+    bind 0.0.0.0:443 ssl crt /etc/haproxy/certs alpn h2,http/1.1
+    mode http
+
+    timeout client  5000
+    log-format [%pid]\ [%Ts.%ms]\ %ac/%fc/%bc/%bq/%sc/%sq/%rc\ %Tq/%Tw/%Tc/%Tr/%Tt\ %tsc\ %ci:%cp\ %fi:%fp\ %si:%sp\ %ft\ %sslc\ %sslv\ %{+Q}r\ %ST\ %b:%s\ "%CC"\ "%hr"\ "%CS"\ "%hs"\ req_size=%U\ resp_size=%B
+    option httplog
+    log global
+    no option accept-invalid-http-request
+    no option httpclose
+    #option forwardfor
+    #option http-server-close
+    #reqadd X-Forwarded-Proto:\ https
+    #reqadd X-HTTPS:\ on
+    http-request add-header X-HTTPS on
+    http-request add-header X-Forwarded-Proto https
+
+    acl is_stats path_beg -i /haproxy-stats
+    acl arash req.hdr(X-arash) -m found
+    use_backend www-docker-http2 if { ssl_fc_alpn -i h2 }
+#    use_backend www-docker-http2 if arash
+    use_backend stats-backend if is_stats
+    default_backend www-docker
+
+frontend kibana
+    bind 0.0.0.0:5601 ssl crt /etc/haproxy/certs
+    mode http
+
+    timeout client  5000
+    log-format [%pid]\ [%Ts.%ms]\ %ac/%fc/%bc/%bq/%sc/%sq/%rc\ %Tq/%Tw/%Tc/%Tr/%Tt\ %tsc\ %ci:%cp\ %fi:%fp\ %si:%sp\ %ft\ %sslc\ %sslv\ %{+Q}r\ %ST\ %b:%s\ "%CC"\ "%hr"\ "%CS"\ "%hs"\ req_size=%U\ resp_size=%B
+    option httplog
+    log global
+    no option accept-invalid-http-request
+    no option httpclose
+    #option http-server-close
+    #option forwardfor
+
+    default_backend www-kibana
+
+backend www-kibana
+    balance roundrobin
+
+    option persist
+    option httpclose
+    option forwardfor
+    option abortonclose
+    cookie worker insert nocache indirect preserve
+    http-send-name-header X-HN
+    http-request set-header X-Forwarded-For %ci
+    rspidel ^(Server|X-User-id):.*
+    acl AuthOkay_demo http_auth(UsersFor_demo)
+    http-request auth realm SuperNovaKibana if !AuthOkay_demo
+
+    server gs-wrk-01 172.18.0.1:5602 cookie gs-wrk-01 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+
+backend www-docker
+    option persist
+    option httpclose
+    option forwardfor
+    option abortonclose
+    no option redispatch
+    balance roundrobin
+    http-request set-header X-Forwarded-For %ci
+    http-response add-header X-App-Server %b/%s
+    http-send-name-header X-HN
+    option http-server-close
+    rspidel ^(Server|X-User-id):.*
+#    acl is_dk hdr(host) -i supernova-dk.digikala.com
+    acl is_supernova hdr_reg(host) -i ^supernova[^\.]*\.digikala\.com$
+    acl is_internalnetwork src -f /etc/haproxy/dk-internal-ips
+    acl is_bank src -f /etc/haproxy/banks-ip-addresses
+    acl is_dev path_beg /dev/
+    acl is_storage path_beg /storage/
+    acl is_mc hdr(Host) -i supernova-mc2.digikala.com
+    acl is_mc_list path_beg /list
+   # acl is_mc_product path_beg /product
+    acl is_mc_product_id urlp(id) -m found
+    acl AuthOkay_demo http_auth(UsersFor_demo)
+    http-request auth realm SuperNovaDemo if is_supernova !AuthOkay_demo !is_dev !is_storage !is_internalnetwork !is_bank
+    #reqadd X-test-server-name-header:\ X-HN
+
+    http-request add-header X-test-server-name-header X-HN
+
+
+    use-server sn-admin-dk if { hdr(Host) -i supernova-dk-admin2.digikala.com }
+    use-server sn-dk if { hdr(Host) -i supernova-dk2.digikala.com }
+    use-server sn-acc if { hdr(Host) -i supernova-accounts2.digikala.com }
+    use-server sn-fc if { hdr(Host) -i supernova-fc2.digikala.com }
+    use-server sn-dv if { hdr(Host) -i supernova-dv2.digikala.com }
+    use-server sn-mc if { hdr(Host) -i supernova-mc2.digikala.com }
+    use-server sn-storage if { hdr(Host) -i supernova-storage2.digikala.com }
+    use-server sn-mobile if { hdr(Host) -i supernova-mobile2.digikala.com }
+    use-server sn-api if { hdr(Host) -i supernova-api2.digikala.com }
+    use-server sn-streamer if { hdr(Host) -i supernova-streamer2.digikala.com }
+
+    use-server sn-ci-dk if { hdr(Host) -i supernova-ci-dk.digikala.com }
+    use-server sn-ci-fc if { hdr(Host) -i supernova-ci-fc.digikala.com }
+    use-server sn-ci-dv if { hdr(Host) -i supernova-ci-dv.digikala.com }
+    use-server sn-ci-mc if { hdr(Host) -i supernova-ci-mc.digikala.com }
+    use-server sn-ci-dk-admin if { hdr(Host) -i supernova-ci-dk-admin.digikala.com }
+
+
+
+    server sn-admin-dk 127.0.0.1:501 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-dk       127.0.0.1:311 maxconn 500 ssl check downinter 3s inter 2000 fall 20 weight 100
+    server sn-acc       127.0.0.1:801 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-fc       127.0.0.1:601 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-dv       127.0.0.1:401 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-mc       127.0.0.1:701 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-storage       127.0.0.1:310 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-mobile      127.0.0.1:1101 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-api         127.0.0.1:1201 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-streamer 172.27.0.5:8081 maxconn 500 check port 8082 downinter 3s inter 2000 fall 20 weight 100
+
+    server sn-ci-dk       127.0.0.1:4003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-fc       127.0.0.1:5003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-dv       127.0.0.1:6003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-mc       127.0.0.1:7003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-dk-admin       127.0.0.1:8003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+
+
+
+
+backend www-docker-http2
+    option persist
+    option httpclose
+    option forwardfor
+    option abortonclose
+    no option redispatch
+    balance roundrobin
+    http-request set-header X-Forwarded-For %ci
+    http-response add-header X-App-Server %b/%s
+    http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
+    http-send-name-header X-HN
+    option http-server-close
+    rspidel ^(Server|X-User-id):.*
+#    acl is_dk hdr(Host) -i supernova-dk.digikala.com
+    acl is_supernova hdr_reg(host) -i ^supernova[^\.]*\.digikala\.com$
+    acl is_internalnetwork src -f /etc/haproxy/dk-internal-ips
+    acl is_dev path_beg /dev/
+    acl is_storage path_beg /storage/
+    acl AuthOkay_demo http_auth(UsersFor_demo)
+    http-request auth realm SuperNovaDemo if is_supernova !AuthOkay_demo !is_dev !is_storage !is_internalnetwork
+    #acl is_video path_reg -i digikala-video
+    #http-response del-header set-cookie if is_video
+    #reqadd X-test-server-name-header:\ X-HN
+    http-request add-header X-test-server-name-header X-HN
+
+    use-server sn-admin-dk if { hdr(Host) -i supernova-dk-admin2.digikala.com }
+    use-server sn-dk if { hdr(Host) -i supernova-dk2.digikala.com }
+    use-server sn-acc if { hdr(Host) -i supernova-accounts2.digikala.com }
+    use-server sn-fc if { hdr(Host) -i supernova-fc2.digikala.com }
+    use-server sn-dv if { hdr(Host) -i supernova-dv2.digikala.com }
+    use-server sn-mc if { hdr(Host) -i supernova-mc2.digikala.com }
+    use-server sn-storage if { hdr(Host) -i supernova-storage2.digikala.com }
+    use-server sn-mobile if { hdr(Host) -i supernova-mobile2.digikala.com }
+    use-server sn-api if { hdr(Host) -i supernova-api2.digikala.com }
+    use-server sn-streamer if { hdr(Host) -i supernova-streamer2.digikala.com }
+
+    use-server sn-ci-dk if { hdr(Host) -i supernova-ci-dk.digikala.com }
+    use-server sn-ci-fc if { hdr(Host) -i supernova-ci-fc.digikala.com }
+    use-server sn-ci-dv if { hdr(Host) -i supernova-ci-dv.digikala.com }
+    use-server sn-ci-mc if { hdr(Host) -i supernova-ci-mc.digikala.com }
+    use-server sn-ci-dk-admin if { hdr(Host) -i supernova-ci-dk-admin.digikala.com }
+
+
+    server sn-admin-dk 127.0.0.1:501 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-dk       127.0.0.1:311 maxconn 500 check ssl downinter 3s inter 2000 fall 20 weight 100
+    server sn-acc      127.0.0.1:801 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-fc       127.0.0.1:601 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-dv       127.0.0.1:401 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-mc       127.0.0.1:701 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-storage  127.0.0.1:310 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-api      127.0.0.1:1201 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-mobile   127.0.0.1:1101 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-streamer 192.168.16.8:8081 maxconn 500 check port 8082 downinter 3s inter 2000 fall 20 weight 100
+
+    server sn-ci-dk       127.0.0.1:4003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-fc       127.0.0.1:5003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-dv       127.0.0.1:6003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-mc       127.0.0.1:7003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+    server sn-ci-dk-admin       127.0.0.1:8003 maxconn 500 check downinter 3s inter 2000 fall 20 weight 100
+
+
+
+userlist UsersFor_demo
+  user supernova2 insecure-password springisgreat
+
+backend stats-backend
+    stats enable
+    stats uri     /haproxy-stats
+    stats realm   Statistics
+    stats auth    admin:yFtKHVFOlVOM5Q1E

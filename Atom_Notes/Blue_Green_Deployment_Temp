@@ -1,0 +1,9 @@
+Search on google for  :
+  bluegreen deployment configuration for haproxy
+
+https://github.com/leucos/ansible-haproxy-blue-green
+https://github.com/elafarge/docker-bluegreen
+https://theholyjava.wordpress.com/2013/09/05/blue-green-deployment-without-breaking-sessions-with-haproxy-and-jetty/
+https://stackoverflow.com/questions/46243967/in-haproxy-is-it-possible-to-stop-routing-traffic-to-a-specific-server-with-act?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+https://github.com/jakubholynet/experiment-blue-green-jetty
+---------------------------------------------------------------------

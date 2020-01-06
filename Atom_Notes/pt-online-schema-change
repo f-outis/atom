@@ -1,0 +1,16 @@
+ALTER TABLE `digikala`.`orders`
+    CHANGE COLUMN `status` `status` enum('new','call_failed','wait_customer','wait_payment','unconfirmed_payment','confirmed','warehouse','warehouse_processing','warehouse_processed','invoice_edit','sent','canceled_user','canceled','canceled_system') NOT NULL DEFAULT 'new' AFTER `application_version_close`, #CHANGED DEFINITION FROM `status` enum('draft','new','call_failed','wait_customer','wait_payment','unconfirmed_payment','confirmed','warehouse','warehouse_processing','warehouse_processed','invoice_edit','sent','canceled_user','canceled','canceled_system') NOT NULL DEFAULT 'draft'
+    DROP INDEX `cart_id`,
+    ADD UNIQUE KEY `cart_id` (`cart_id`),
+    ADD KEY `created_at` (`created_at`),
+    ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+pt-online-schema-change  ----execute --ask-pass --user=admin --chunk-time=1 --nodrop-old-table --alter "add column foo int(11) default null" D=an_app_staging,t=foo_records,h=localhost
+
+pt-online-schema-change --dry-run --nodrop-old-table --user=root --ask-pass --alter "CHANGE COLUMN `status` `status` enum('new','call_failed','wait_customer','wait_payment','unconfirmed_payment','confirmed','warehouse','warehouse_processing','warehouse_processed','invoice_edit','sent','canceled_user','canceled','canceled_system') NOT NULL DEFAULT 'new' AFTER `application_version_close`, #CHANGED DEFINITION FROM `status` enum('draft','new','call_failed','wait_customer','wait_payment','unconfirmed_payment','confirmed','warehouse','warehouse_processing','warehouse_processed','invoice_edit','sent','canceled_user','canceled','canceled_system') NOT NULL DEFAULT 'draft',DROP INDEX `cart_id`,ADD UNIQUE KEY `cart_id` (`cart_id`),ADD KEY `created_at` (`created_at`),ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+
+
+pt-online-schema-change --chunk-size=100 --no-drop-old-table --max-load Threads_running=50 --user=root --ask-pass --critical-load Threads_running=500 h=127.0.0.1:302,D=digikala,t=orders --dry-run --nocheck-unique-key-change --alter "$(<alter.sql)"
+
+Note : --statistics

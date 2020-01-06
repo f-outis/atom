@@ -1,0 +1,14 @@
+  $git config --global user.name "fara"
+  $git config --global user.email "fara@mylab1.com"
+  $git clone http://ubuntuSRV01/learning_projects/ansible_learning1.git
+
+  $cd ansible_learning
+  $touch README.md
+  $git add README.md
+  $git commit -m "add README"
+  $git push -u origin master
+
+Check your information :
+  $git config --global --list
+  ---------------------------------
+  

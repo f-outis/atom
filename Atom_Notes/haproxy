@@ -1,0 +1,58 @@
+global
+        log logstash    local0 #Change logstash to your naming
+        log-send-hostname
+        chroot /var/lib/haproxy
+        user haproxy
+        group haproxy
+        daemon
+        maxconn 4000
+
+defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        option redispatch
+        retries 3
+        timeout client 35s
+        timeout server 60s
+        timeout connect 5s
+        timeout http-keep-alive 10s
+#        contimeout 5000
+#        clitimeout 50000
+#        srvtimeout 50000
+        errorfile 400 /etc/haproxy/errors/400.http
+        errorfile 403 /etc/haproxy/errors/403.http
+        errorfile 408 /etc/haproxy/errors/408.http
+        errorfile 500 /etc/haproxy/errors/500.http
+        errorfile 502 /etc/haproxy/errors/502.http
+        errorfile 503 /etc/haproxy/errors/503.http
+        errorfile 504 /etc/haproxy/errors/504.http
+
+listen stats :9090
+        balance
+        mode http
+        stats enable
+        stats auth admin:admin
+
+listen elasticsearch-TCP-9200 10.0.101.60:9200
+        mode tcp
+        option tcpka
+        option tcplog
+        #balance leastconn - The server with the lowest number of connections receives the connection
+        #balance roundrobin - Each server is used in turns, according to their weights.
+        #balance source - Source IP hashed and divided by total weight of servers designates which server will receive the request
+        balance roundrobin
+        server logstash-1 logstash-1:9200 check
+        server logstash-2 logstash-2:9200 check
+
+listen elasticsearch-TCP-9300 10.0.101.60:9300
+        mode tcp
+        option tcpka
+        option tcplog
+        #balance leastconn - The server with the lowest number of connections receives the connection
+        #balance roundrobin - Each server is used in turns, according to their weights.
+        #balance source - Source IP hashed and divided by total weight of servers designates which server will receive the request
+        balance roundrobin
+        server es-1 es-1:9300 check
+        server es-2 es-2:9300 check

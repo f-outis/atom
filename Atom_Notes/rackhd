@@ -1,0 +1,34 @@
+RackHD :
+
+How to communicate with iLO :
+  - OBMS
+  - IBSM
+
+on-http 9090
+on-tasks
+on-taskgraph 9030
+on-dhcp-proxy 4011
+on-syslog 514
+on-tftp
+on-files ipxe-kxpe
+---
+MongoDB
+RabbitMQ
+isc-dhcp
+
+PXE Boot --Req--> dpcp --Get--> ip --Run--> monorail.ipxe
+  monorail is a text file. at its bottom it will fetch a profile
+        Request format : rackhd:9030/api/current/profile?mac= &ip= --> on-taskgraph -> data -> profile
+
+--include-ejs--> ipxe+install-debian.ipxe
+
+  within install-debian we have different parameters :
+    baseurl
+    kernel
+    initrd
+    imagearg  (These will be used as kernel parameters to kernel parameter)
+
+then kernel will be booted.
+In this step RackHD is finished its first phase
+
+there is Preseed, as kickstart facility for debian installer.

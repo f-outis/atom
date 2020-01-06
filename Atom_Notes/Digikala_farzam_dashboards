@@ -1,0 +1,86 @@
+Kibana DataScience : (Page View)-> Client side information
+172.16.12.161:5601
+
+Splunk : (KPI's)-> DB
+172.16.159.36:8000
+
+--------------------------------
+PRTG DS : (User: faramarsh / Pass: !QAZxsw2)
+
+Fashion-Fileserver
+https://monitoring.digikala.com:9000/public/mapshow.htm?id=20380&mapid=23E79C71-F324-48B7-A35D-7D1A100EE405
+
+Search
+https://monitoring.digikala.com:9000/public/mapshow.htm?id=20387&mapid=FE63B4B3-C30B-4EC7-8A20-999F13843B1F
+
+Database
+https://monitoring.digikala.com:9000/public/mapshow.htm?id=20397&mapid=5CCEACF9-F619-4E32-ACD3-94DF38ED878E
+
+Redis
+https://monitoring.digikala.com:9000/public/mapshow.htm?id=20406&mapid=3AB1266A-44D8-497B-9207-713235D3B91A
+
+BackOffice
+https://monitoring.digikala.com:9000/public/mapshow.htm?id=20414&mapid=03D1C683-21EA-4FA5-BE66-116026890E6C
+
+Webservers
+https://monitoring.digikala .com:9000/public/mapshow.htm?id=20379&mapid=876BD06E-5E4B-4BDB-BDAA-18BF9D4BDF33
+-------------------------------
+Error Logs :
+172.16.12.242 Website.errorlog.digikala.com
+172.16.12.243 webapp.errorlog.digikala.com
+172.16.12.244 mobapp.errorlog.digikala.com
+172.16.12.245 bo.errorlog.digikala.com
+172.16.11.25 bo.errorlog.digistyle.com
+172.16.11.26 www.errorlog.digistyle.com
+-------------------------------
+Agha Cluster jadid: Kibana:
+http://172.16.2.250:5601/app/monitoring
+http://172.16.159.57
+http://172.16.8.16:5601/app/monitoring
+in akhari ham preproduction e
+--------------------------------
+12.125
+StatsD by ML
+---------------------
+On Mon0 :
+Statistics by ML
+sitespeed
+google analytics
+
+On Mon1 :
+Elasticsearch
+
+On Mon2 :
+Any stat on ncache
+ncache cluster monitoring
+
+On Mon3 :
+Error logs
+Statistics by Farzam
+---------------------------------------
+Ncache Performance :
+http://172.16.12.125:3000/dashboard/db/statsd?refresh=5s&orgId=1&from=now-30m&to=now
+
+
+http://172.16.12.161:5601/app/kibana#/dashboard/13bfe9e0-cfa4-11e7-a48d-87a1986f5fae?_g=()&_a=(description:%27%27,filters:!(),options:(darkTheme:!f),panels:!((col:7,id:b2cfbda0-cfa2-11e7-a48d-87a1986f5fae,panelIndex:1,row:1,size_x:6,size_y:6,type:visualization),(col:1,id:ba7f6720-cfa3-11e7-a48d-87a1986f5fae,panelIndex:2,row:1,size_x:6,size_y:6,type:visualization)),query:(match_all:()),timeRestore:!f,title:%27KPI%20Dashboard%27,uiState:(),viewMode:view)
+
+http://172.16.12.161:5601/app/kibana#/dashboard/af69d150-c3a4-11e7-8695-efcc16c9d84d?_g=(refreshInterval:(%27$$hashKey%27:%27object:1984%27,display:%2730%20seconds%27,pause:!f,section:1,value:30000),time:(from:now-1h,mode:quick,to:now))&_a=(description:%27%27,filters:!(),options:(darkTheme:!f),panels:!((col:1,id:%272ca25090-c3a3-11e7-96fe-d7bc70b758f4%27,panelIndex:1,row:1,size_x:12,size_y:5,type:visualization),(col:7,id:bfdd81e0-c3a3-11e7-96fe-d7bc70b758f4,panelIndex:2,row:9,size_x:6,size_y:3,type:visualization),(col:1,id:%271ddcec40-c3a4-11e7-96fe-d7bc70b758f4%27,panelIndex:3,row:9,size_x:6,size_y:3,type:visualization),(col:7,id:%273954b360-c3a2-11e7-96fe-d7bc70b758f4%27,panelIndex:4,row:6,size_x:6,size_y:3,type:visualization),(col:1,id:f665aa80-c399-11e7-96fe-d7bc70b758f4,panelIndex:5,row:12,size_x:6,size_y:3,type:visualization),(col:1,id:a385d880-c399-11e7-96fe-d7bc70b758f4,panelIndex:6,row:6,size_x:6,size_y:3,type:visualization),(col:7,id:%2745239730-c3a5-11e7-8695-efcc16c9d84d%27,panelIndex:8,row:12,size_x:6,size_y:3,type:visualization)),query:(match_all:()),timeRestore:!f,title:%27Main%20Dashboard%27,uiState:(),viewMode:view)
+
+http://172.16.2.250:5601/app/monitoring#/elasticsearch/indices?_g=(cluster_uuid:%272PfCasRWRuq-8_VPdwgI_w%27,refreshInterval:(%27$$hashKey%27:%27object:224%27,display:%275%20seconds%27,pause:!f,section:1,value:5000),time:(from:now-1h,mode:quick,to:now))
+
+http://172.16.159.57/dashboard/db/digikala-elasticsearch-overview
+username : f.moeeni
+pass : HajFaramarz
+
+
+Ncache cluster - remote desktop :
+172.16.2.48
+  Username : f.moeeni
+  Password : Digi@123
+  Domain : dknet
+
+  check ncache responsiveness :
+    cmd -> getcachecount NCache01 /s IP_SERVER
+
+    cmd -> stopcache NCache01 /s IPSERVER
+    cmd -> startcache NCache01 /s IPSERVER

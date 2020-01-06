@@ -1,0 +1,76 @@
+با سلام :
+  چنانچه به دنبال ارتقأ نمره آیلتس ۵.۵ خود به ۷ تا ۷.۵ می‌باشید با ما تماس بگیرید
+  در ۵ هفته و ۱۰۰ درصد تضمینی با ارائه قرارداد و تضمین .
+
+  شماره تماس : (WhatsApp 0060189695048) .
+---------------------------------------------------
+Mahyar :
+- No problem.
+- Wiki Gitlab (Markdown)
+- Blog for changes in Gitlab issues
+
+salt -C "memcached-max* or memcached-short* or memcached-logn*" service.restart memcached
+
+salt -C "memcached-max*.worker-7[3-9]* or  memcached-max*.worker-8[0-6]* or memcached-long*.worker-8[0-6]* or memcached-long*.worker-7[3-9]* or memcached-short*.worker-8[0-6]* or memcached-short*.worker-7[3-9]*" service.restart memcached
+
+salt -C "redis.worker-59* or redis.worker-6[5,6]*" service.stop redis
+salt -C "redis.worker-59* or redis.worker-6[5,6]*" cmd.run "rm /var/lib/redis/dump.rdb"
+salt -C "redis.worker-59* or redis.worker-6[5,6]*" service.start redis
+salt -C "redis.worker-6[7-9]" service.stop redis
+salt -C "redis.worker-6[7-9]*" service.stop redis
+salt -C "redis.worker-6[7-9]*" cmd.run "rm /var/lib/redis/dump.rdb"
+salt -C "redis.worker-6[7-9]*" service.start redis
+salt -C "redis.worker-7[0-2]*" service.stop redis
+salt -C "redis.worker-7[0-2]*" cmd.run "rm /var/lib/redis/dump.rdb"
+salt -C "redis.worker-7[0-2]*" service.start redis
+salt -C "redis.worker-79* or redis.worker-8[0,1]*" service.stop redis
+salt -C "redis.worker-79* or redis.worker-8[0,1]*" cmd.run "rm /var/lib/redis/dump.rdb"
+salt -C "redis.worker-79* or redis.worker-8[0,1]*" service.start redis
+----------------------------------------------------------------------------------------
+Arash Shams :
+  - Arash is one the first members of the team. He's so fun, friendly, and so loyal. Without a doubt, one of the bests in Iran. His expertise are as follow :
+    -- Linux system expert
+    -- Strong abilities in scripting
+    -- High availability solution architect
+    -- Mass deployment expert
+    -- MySQL DBA
+    -- A dictionary of high-end DevOps tools
+    -- A powerful understanding about both routing and software configurations.
+
+Roozbeh Karimi :
+  - Roozbeh is one of those who defy creativity. He's pure geniusity and a real definition of a geek. You only need to tell him what should be done, shortly you'll have the best outcome if a short time.
+    -- A talented and experienced software engineer
+    -- Analytic mindset
+    -- Creator, amazing ability to connect things together by creating new tools.
+    -- Inventor, He has invented some tools.
+
+Salar Moghaddam :
+  - Salar is young and talented. He will have a bright future. He's only 21 years old and he could deliver a a lot in this project.
+    -- Skilled Linux system administrator
+    -- Responsible for assigned tasks
+    -- Fast learner
+    -- Reliable in stressful situations
+    -- He has crush on Dockers and containerization technologies
+
+Mahyar Abbaspour :
+  - Mahyar is among those young and talented software engineers who should be trained to be a professional. He's motivated and self-driven
+    -- A team player
+    -- Delivers with precision
+    -- A reliable software engineer
+    -- Strong Python and Git skills
+============================================================
+To Download :
+https://scanlibs.com/practical-devops-security-video/
+https://scanlibs.com/complete-javascript-course-build-projects/
+
+18-Dec 10:30 am - 10:35 am (~5 minutes)
+18-Dec 11:40 am - 11:50 am (~10 minutes)
+
+
+1. Create a ticket on Assembla in Infrastructure milestone
+2. Describe the request( Access type(Read-only or Read/Write) + Name of the database ) + The purpose of this access
+3. Assign the ticket to Lukasz.  Lukasz must read the description and approve or ignore it.
+4. If Lukasz approved the request, then he must assign it to Faramarz Moeeni. He will handle it by himself or any other of DevOps team members.
+-------------------------------------------------
+Vagrant issue : Stderr: VBoxManage: error: Could not find a controller named 'SATAController'
+https://github.com/hashicorp/vagrant/issues/8105

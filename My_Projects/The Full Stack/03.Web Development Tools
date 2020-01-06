@@ -1,0 +1,5 @@
+1.Version Control: Git, SVN
+  It's unacceptable not to use version control, even if you're a solo developer
+
+2.Virtualization: VirtualBox, Vagrant, Docker
+  With virtualization tools, having separated development environments on a per project basis is really nice to have, and easy to set up with VirtualBox and Vagrant at least.
