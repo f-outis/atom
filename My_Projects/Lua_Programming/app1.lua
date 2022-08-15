@@ -8,4 +8,5 @@ end
 
 print("enter a number blow :")
 a = io.read("*n")
+
 print(fact(a))
